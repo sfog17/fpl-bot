@@ -21,7 +21,7 @@ def format_filename(output_name, extension):
 
 def get_historical(output_name):
     '''Extract the historical data for all the players
-    
+
     Arguments:
         output_name {str} -- Name of the output file (only filename, no path nor extension)
     '''
@@ -48,7 +48,7 @@ def get_historical(output_name):
 
 def get_rankings(output_name, nb_users):
     """Extract the rankings for a list of random users of fantasy football
-    
+
     Arguments:
         output_name {str} -- Name of the output file (only filename, no path nor extension)
         nb_users {int} -- Number of users to query
@@ -56,22 +56,21 @@ def get_rankings(output_name, nb_users):
 
     logger.info('Start extracting rankings')
 
-    total_players = requests.get(URL_BOOTSTRAP).json()['total-players']
-    list_players_ranks = []
+    total_users = requests.get(URL_BOOTSTRAP).json()['total-players']
+    list_users_ranks = []
 
     for i in range(nb_users):
         if (i % 100) == 0:
             logger.debug(f'Extracted {i} Users')
         
-        player_id = str(random.randint(0, total_players))
-        r = requests.get(URL_BASE+'/entry/'+player_id+'/history')
-        result = r.json()
-        list_players_ranks.extend(result['history'])
+        user_id = str(random.randint(0, total_users))
+        result = requests.get(URL_BASE+'/entry/' + user_id + '/history')
+        list_users_ranks.extend(result.json()['history'])
         time.sleep(0.01)
 
     logger.info('Finished extracting rankings')
 
-    df_rankings = pd.DataFrame(list_players_ranks).sort_values('event')
+    df_rankings = pd.DataFrame(list_users_ranks).sort_values('event')
     output_path = DIR_RANKINGS / format_filename(output_name, 'csv')
     df_rankings.to_csv(output_path, index=False)
 
