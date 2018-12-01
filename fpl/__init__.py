@@ -22,3 +22,7 @@ console_handler.setFormatter(logger_formatter)
 loggers.addHandler(file_handler)
 loggers.addHandler(console_handler)
 loggers.info('Completed configuring logger()!')
+
+
+# Block DEBUG level from other modules
+logging.getLogger('matplotlib').setLevel(logging.WARNING)

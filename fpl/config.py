@@ -4,7 +4,7 @@ import pathlib
 DIR_DATA = pathlib.Path(__file__).parent.parent.joinpath('data')
 
 DIR_RAW_HIST = DIR_DATA.joinpath('raw', 'historical')
-DIR_DATA_RAW_BOOTSTRAP = DIR_DATA.joinpath('raw', 'bootstrap')
+DIR_RAW_BOOTSTRAP = DIR_DATA.joinpath('raw', 'bootstrap')
 DIR_RANKINGS = DIR_DATA.joinpath('raw', 'rankings')
 
 FILE_INTER_HISTORICAL = DIR_DATA.joinpath('intermediate', 'historical.csv')
