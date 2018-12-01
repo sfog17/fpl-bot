@@ -127,5 +127,4 @@ dependencies:
   - zope.interface=4.5.0=py36hfa6e2cd_0
   - pip:
     - xgboost==0.80
-prefix: C:\Users\Gabriel\Anaconda3\envs\fpl
 
