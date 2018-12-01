@@ -1,0 +1,11 @@
+# Python
+*.egg-info
+*__pycache__
+
+# Data
+*.log
+*.tsv
+*.csv
+*.json
+*.ipynb
+*.pbix
