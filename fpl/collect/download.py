@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 import requests
 import pandas as pd
-from fpl.config import DIR_RAW_HIST, DIR_RANKINGS, URL_BASE, URL_BOOTSTRAP, URL_PLAYERS
+from fpl.constants import DIR_RAW_HIST, DIR_RANKINGS, URL_BASE, URL_BOOTSTRAP, URL_PLAYERS
 
 # Fields BOOTSTRAP
 ELEMENTS = 'elements'
@@ -20,12 +20,13 @@ def format_filename(output_name, extension):
 
 
 def get_historical(output_name):
-    '''Extract the historical data for all the players
+    """
+    Extract the historical data for all the players
 
     Arguments:
         output_name {str} -- Name of the output file (only filename, no path nor extension)
-    '''
-    
+    """
+
     with open(DIR_RAW_HIST / format_filename(output_name, 'json'), 'w') as f_out:
 
         logger.info('Start extracting historical data')
@@ -47,7 +48,8 @@ def get_historical(output_name):
 
 
 def get_rankings(output_name, nb_users):
-    """Extract the rankings for a list of random users of fantasy football
+    """
+    Extract the rankings for a list of random users of fantasy football
 
     Arguments:
         output_name {str} -- Name of the output file (only filename, no path nor extension)
