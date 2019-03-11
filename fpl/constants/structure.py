@@ -1,4 +1,4 @@
-    import pathlib
+import pathlib
 
 # Structure Data
 DIR_DATA = pathlib.Path(__file__).parent.parent.joinpath('data')
