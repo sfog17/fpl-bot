@@ -1,5 +1,5 @@
 import pandas as pd
-from fpl.constants import FILE_INTER_HISTORICAL, FILE_INTER_BOOTSTRAP_FEAT, FILE_INTER_FEATURES
+from fpl.constants.structure import FILE_INTER_HISTORICAL, FILE_INTER_BOOTSTRAP_FEAT, FILE_INTER_FEATURES
 from fpl.utils.featurise import add_prev_groupby
 
 F_SEASON_ID = 'season_id'

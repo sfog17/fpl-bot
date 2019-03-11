@@ -1,7 +1,7 @@
 import json
 import logging
 import pandas as pd
-from fpl.constants import DIR_RAW_HIST, FILE_INTER_HISTORICAL
+from fpl.constants.structure import DIR_RAW_HIST, FILE_INTER_HISTORICAL
 
 FPL_HIST_PAST = 'history_past'  # History Previous Seasons
 

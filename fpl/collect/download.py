@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 import requests
 import pandas as pd
-from fpl.constants import DIR_RAW_HIST, DIR_RANKINGS, URL_BASE, URL_BOOTSTRAP, URL_PLAYERS
+from fpl.constants.structure import DIR_RAW_HIST, DIR_RANKINGS, URL_BASE, URL_BOOTSTRAP, URL_PLAYERS
 
 # Fields BOOTSTRAP
 ELEMENTS = 'elements'
