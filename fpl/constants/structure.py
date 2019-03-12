@@ -1,7 +1,7 @@
 import pathlib
 
 # Structure Data
-DIR_DATA = pathlib.Path(__file__).parent.parent.joinpath('data')
+DIR_DATA = pathlib.Path(__file__).parent.parent.parent.joinpath('data')
 
 DIR_RAW_HIST = DIR_DATA.joinpath('raw', 'historical')
 DIR_RAW_BOOTSTRAP = DIR_DATA.joinpath('raw', 'bootstrap')

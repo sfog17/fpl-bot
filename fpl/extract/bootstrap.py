@@ -107,6 +107,7 @@ def build_bootstrap_dataset(dir_data_raw_hist):
     :return:
     """
     list_df = []
+    logger.info(f'Screen folder {dir_data_raw_hist}')
     for file_path in dir_data_raw_hist.glob('*.json'):
         if file_path.is_file():
             logger.info(f'Processing file {file_path.name}')
