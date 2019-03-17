@@ -38,7 +38,7 @@ FPL_TRANSFERS_OUT = 'fpl_transfers_out'
 FPL_COST_CHANGE = 'fpl_cost_change'
 
 # Result
-RESULT_MIN_CUMSUM_LAST = 'result_min_cumsum_last'
+RESULT_MINUTES_TOT = 'result_minutes_season'
 RESULT_POINTS_PREV = 'result_points_prev'
 RESULT_POINTS = 'result_points'
 

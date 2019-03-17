@@ -6,3 +6,8 @@ pd.options.display.width = 300
 
 def test_print():
     print(get_week_info('test-resources/example_bootstrap-static.json'))
+
+
+# past points and minutes initialised at 0
+# Check no empty "chance of playing"
+# check points diff betzeen last and current event

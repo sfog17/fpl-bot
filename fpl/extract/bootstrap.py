@@ -28,7 +28,7 @@ def get_player_info(bootstrap_json):
         'transfers_out_event': fld.FPL_TRANSFERS_OUT,
         'transfers_in_event': fld.FPL_TRANSFERS_IN,
         'event_points': fld.RESULT_POINTS_PREV,
-        'minutes': fld.RESULT_MIN_CUMSUM_LAST,
+        'minutes': fld.RESULT_MINUTES_TOT,
         'element_type': fld.POSITION_ID,
         'team': fld.TEAM_ID_SEASON
     }
@@ -36,7 +36,7 @@ def get_player_info(bootstrap_json):
         raise KeyError(f'{set(mapping.keys()) - set(df_player.columns)}')
 
     keep_fields = list(mapping.values())
-    df_player.rename(index=str, columns=mapping, inplace=True)
+    df_player.rename(columns=mapping, inplace=True)
     return df_player[keep_fields]
 
 
@@ -55,7 +55,7 @@ def get_position_info(bootstrap_json):
         raise KeyError(f'{set(mapping.keys()) - set(df_position.columns)}')
 
     keep_fields = list(mapping.values())
-    df_position.rename(index=str, columns=mapping, inplace=True)
+    df_position.rename(columns=mapping, inplace=True)
     return df_position[keep_fields]
 
 
@@ -78,7 +78,7 @@ def get_team_info(bootstrap_json):
     if not set(mapping.keys()).issubset(set(df_team.columns)):
         raise KeyError(f'{set(mapping.keys()) - set(df_team.columns)}')
 
-    df_team.rename(index=str, columns=mapping, inplace=True)
+    df_team.rename(columns=mapping, inplace=True)
 
     # Extract Data Games
     df_strengths = df_team[[fld.TEAM_ID_SEASON, fld.TEAM_NAME, fld.TEAM_STRENGTH]]
@@ -91,28 +91,32 @@ def get_team_info(bootstrap_json):
     df_team['game_1_team_id_season'] = df_team['next_event_fixture'].apply(
         lambda x: x[0]['opponent'] if len(x) > 0 else np.nan)
 
-    df_team = df_team.merge(df_strengths,
-                            how='left', left_on='game_1_team_id_season', right_on=fld.TEAM_ID_SEASON,
+    df_team = df_team.merge(df_strengths.rename(columns={fld.TEAM_ID_SEASON: 'game_1_team_id_season'}),
+                            how='left', on='game_1_team_id_season',
                             suffixes=('', '_g1')
                             )
     # Join Game 2
     df_team['game_2_team_id_season'] = df_team['next_event_fixture'].apply(
         lambda x: x[1]['opponent'] if len(x) > 1 else np.nan)
-    df_team = df_team.merge(df_strengths,
-                            how='left', left_on='game_2_team_id_season', right_on=fld.TEAM_ID_SEASON,
+
+    df_team = df_team.merge(df_strengths.rename(columns={fld.TEAM_ID_SEASON: 'game_2_team_id_season'}),
+                            how='left', on='game_2_team_id_season',
                             suffixes=('', '_g2')
                             )
     # Rename new fields
     mapping_game = {
-        fld.TEAM_NAME + '_g1': fld.GAME_1_TEAM_NAME,
-        fld.TEAM_NAME + '_g1': fld.GAME_1_TEAM_STRENGTH,
-        fld.TEAM_NAME + '_g2': fld.GAME_2_TEAM_NAME,
-        fld.TEAM_STRENGTH + '_g2': fld.GAME_2_TEAM_STRENGTH
+        (fld.TEAM_NAME + '_g1'): fld.GAME_1_TEAM_NAME,
+        (fld.TEAM_STRENGTH + '_g1'): fld.GAME_1_TEAM_STRENGTH,
+        (fld.TEAM_NAME + '_g2'): fld.GAME_2_TEAM_NAME,
+        (fld.TEAM_STRENGTH + '_g2'): fld.GAME_2_TEAM_STRENGTH
     }
-    df_team.rename(index=str, columns=mapping_game, inplace=True)
+    df_team.rename(columns=mapping_game, inplace=True)
 
     # Select Field
-    keep_fields = list(mapping.values()) + list(mapping_game.values()) + [fld.GAME_NB, fld.GAME_1_HOME, fld.GAME_2_HOME]
+    keep_fields = [
+        fld.TEAM_NAME, fld.TEAM_ID, fld.TEAM_STRENGTH, fld.GAME_NB, fld.GAME_1_HOME, fld.GAME_2_HOME,
+        fld.GAME_1_TEAM_NAME, fld.GAME_1_TEAM_STRENGTH, fld.GAME_2_TEAM_NAME, fld.GAME_2_TEAM_STRENGTH,
+    ]
 
     return df_team[keep_fields]
 
@@ -164,15 +168,21 @@ def build_bootstrap_dataset(dir_data_raw_hist):
 
     # Append the result  (requires to merge on the previous gamweek)
     df_result = df_bootstrap.copy()[[fld.SEASON_ID, fld.GW_PREV, fld.PLAYER_ID, fld.RESULT_POINTS_PREV]]
-    df_result.rename(index=str,
-                     columns={fld.RESULT_POINTS_PREV: fld.RESULT_POINTS, fld.GW_PREV: fld.GW},
+    df_result.rename(columns={fld.RESULT_POINTS_PREV: fld.RESULT_POINTS, fld.GW_PREV: fld.GW},
                      inplace=True)
 
-    df_final = df_bootstrap.merge(df_result,
-                                  how='left',
-                                  on=[fld.SEASON_ID, fld.GW, fld.PLAYER_ID]
-                                  )
-    return df_final
+    df_merged = df_bootstrap.merge(df_result,
+                                   how='left',
+                                   on=[fld.SEASON_ID, fld.GW, fld.PLAYER_ID]
+                                   )
+
+    # Clean
+    df_merged.dropna(subset=[fld.GW], inplace=True)                                    # Remove empty gameweeks
+    df_merged[fld.PLAYER_CHANCE_PLAY] = df_merged[fld.PLAYER_CHANCE_PLAY].fillna(100)  # Fill empty fields
+    df_merged[fld.RESULT_POINTS_PREV] = np.where(df_merged[fld.GW] == 1, np.nan, df_merged[fld.RESULT_POINTS_PREV])
+    df_merged[fld.RESULT_MINUTES_TOT] = np.where(df_merged[fld.GW] == 1, np.nan, df_merged[fld.RESULT_MINUTES_TOT])
+
+    return df_merged
 
 
 def run():
