@@ -18,12 +18,12 @@ def add_avg_prev_season(df):
     """
     df_prev = df.copy()
     # Calculate average previous season
-    df_prev[fld.TEAM_ID_SEASON] = df_prev[fld.TEAM_ID_SEASON] + 1
+    df_prev[fld.SEASON_ID] = df_prev[fld.SEASON_ID] + 1
     df_prev[fld.STAT_POINTS_AVG_SEASON_PREV] = df_prev[TOTAL_POINTS].apply(lambda x: round(x / 38, 2))
     # Select only fields of interest
-    df_prev = df_prev[[fld.PLAYER_ID, fld.TEAM_ID_SEASON, fld.STAT_POINTS_AVG_SEASON_PREV]]
+    df_prev = df_prev[[fld.PLAYER_ID, fld.SEASON_ID, fld.STAT_POINTS_AVG_SEASON_PREV]]
     # Merge
-    df_merged = df.merge(df_prev, how='left', on=[fld.PLAYER_ID, fld.TEAM_ID_SEASON])
+    df_merged = df.merge(df_prev, how='left', on=[fld.PLAYER_ID, fld.SEASON_ID])
     return df_merged
 
 
@@ -36,14 +36,14 @@ def get_historical_info(history_json):
     df_history = pd.DataFrame(history_json['history_past'])
     mapping = {
         'element_code': fld.PLAYER_ID,
-        'season': fld.TEAM_ID_SEASON
+        'season': fld.SEASON_ID
     }
 
     df_history.rename(columns=mapping, inplace=True)
     logging.debug(df_history.head())
 
     df_history = add_avg_prev_season(df_history)
-    df_history = df_history[[fld.PLAYER_ID, fld.TEAM_ID_SEASON, fld.STAT_POINTS_AVG_SEASON_PREV]]
+    df_history = df_history[[fld.PLAYER_ID, fld.SEASON_ID, fld.STAT_POINTS_AVG_SEASON_PREV]]
 
     return df_history
 

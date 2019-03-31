@@ -9,7 +9,7 @@ pd.options.display.max_columns = 5
 def test_simple():
     df_simple = pd.DataFrame({
         fld.PLAYER_ID: [100, 100, 100],
-        fld.TEAM_ID_SEASON: [9, 10, 11],
+        fld.SEASON_ID: [9, 10, 11],
         TOTAL_POINTS: [20, 50, 100]
     })
     df_avg = pd.DataFrame({fld.STAT_POINTS_AVG_SEASON_PREV: [np.nan, 0.53, 1.32]})

@@ -42,6 +42,11 @@ RESULT_POINTS_PREV = 'result_points_prev'
 RESULT_POINTS = 'result_points'
 STAT_MINUTES_TOTAL_SEASON = 'stat_minutes_total_season'
 
+# Historical
 STAT_POINTS_AVG_SEASON_PREV = 'stat_points_avg_season_prev'
 
 #############################################
+# Machine Learning
+ML_LABEL = 'label'
+ML_PREDICT = 'predict'
+
