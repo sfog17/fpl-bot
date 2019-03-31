@@ -13,4 +13,5 @@
 *.json
 *.ipynb
 *.pbix
+*.zip
 reports

@@ -38,8 +38,10 @@ FPL_TRANSFERS_OUT = 'fpl_transfers_out'
 FPL_COST_CHANGE = 'fpl_cost_change'
 
 # Result
-RESULT_MINUTES_TOT = 'result_minutes_season'
 RESULT_POINTS_PREV = 'result_points_prev'
 RESULT_POINTS = 'result_points'
+STAT_MINUTES_TOTAL_SEASON = 'stat_minutes_total_season'
+
+STAT_POINTS_AVG_SEASON_PREV = 'stat_points_avg_season_prev'
 
 #############################################

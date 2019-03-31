@@ -28,7 +28,7 @@ def get_player_info(bootstrap_json):
         'transfers_out_event': fld.FPL_TRANSFERS_OUT,
         'transfers_in_event': fld.FPL_TRANSFERS_IN,
         'event_points': fld.RESULT_POINTS_PREV,
-        'minutes': fld.RESULT_MINUTES_TOT,
+        'minutes': fld.STAT_MINUTES_TOTAL_SEASON,
         'element_type': fld.POSITION_ID,
         'team': fld.TEAM_ID_SEASON
     }
@@ -180,7 +180,7 @@ def build_bootstrap_dataset(dir_data_raw_hist):
     df_merged.dropna(subset=[fld.GW], inplace=True)                                    # Remove empty gameweeks
     df_merged[fld.PLAYER_CHANCE_PLAY] = df_merged[fld.PLAYER_CHANCE_PLAY].fillna(100)  # Fill empty fields
     df_merged[fld.RESULT_POINTS_PREV] = np.where(df_merged[fld.GW] == 1, np.nan, df_merged[fld.RESULT_POINTS_PREV])
-    df_merged[fld.RESULT_MINUTES_TOT] = np.where(df_merged[fld.GW] == 1, np.nan, df_merged[fld.RESULT_MINUTES_TOT])
+    df_merged[fld.STAT_MINUTES_TOTAL_SEASON] = np.where(df_merged[fld.GW] == 1, np.nan, df_merged[fld.STAT_MINUTES_TOTAL_SEASON])
 
     return df_merged
 
