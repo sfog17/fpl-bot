@@ -11,8 +11,8 @@ def predict_simple(df: pd.DataFrame):
         df[fld.RESULT_POINTS_PREV].notnull(), 
         df[fld.RESULT_POINTS_PREV], 
         np.where(
-            df[fld.STAT_MINUTES_TOTAL_SEASON].notnull(), 
-            df[fld.STAT_MINUTES_TOTAL_SEASON], 
+            df[fld.STAT_POINTS_AVG_SEASON_PREV].notnull(),
+            df[fld.STAT_POINTS_AVG_SEASON_PREV],
             0
         )
     )
