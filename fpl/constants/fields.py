@@ -47,6 +47,5 @@ STAT_POINTS_AVG_SEASON_PREV = 'stat_points_avg_season_prev'
 
 #############################################
 # Machine Learning
-ML_LABEL = 'label'
 ML_PREDICT = 'predict'
 
