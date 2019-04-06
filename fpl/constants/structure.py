@@ -12,7 +12,8 @@ FILE_INTER_HISTORICAL = DIR_DATA.joinpath('intermediate', 'historical.csv')
 
 FILE_PROC_FEATURES = DIR_DATA.joinpath('processed', 'features.csv')
 
-DIR_DATA_RESULTS = DIR_DATA.joinpath('results')
+FILE_PREDICTIONS = DIR_DATA.joinpath('results', 'predictions.csv')
+
 
 # URL Scrape
 URL_BASE = 'https://fantasy.premierleague.com/drf/'

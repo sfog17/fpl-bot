@@ -23,7 +23,7 @@ def add_avg_prev_season(df):
     # Select only fields of interest
     df_prev = df_prev[[fld.PLAYER_ID, fld.SEASON_ID, fld.STAT_POINTS_AVG_SEASON_PREV]]
     # Merge
-    df_merged = df.merge(df_prev, how='left', on=[fld.PLAYER_ID, fld.SEASON_ID])
+    df_merged = df.merge(df_prev, how='outer', on=[fld.PLAYER_ID, fld.SEASON_ID])
     return df_merged
 
 
