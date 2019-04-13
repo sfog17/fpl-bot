@@ -77,3 +77,27 @@ def get_rankings(output_name, nb_users):
     df_rankings.to_csv(output_path, index=False)
 
     logger.info(f'Results wrote to csv file {output_path}')
+
+
+def get_user_info(email, password) -> dict:
+    logging.info('Connect - Retrieve user info from https://fantasy.premierleague.com/')
+
+    # Create Session
+    session = requests.Session()
+    # Go to login page to get the cookies
+    session.get('https://fantasy.premierleague.com/')
+    csrftoken = session.cookies['csrftoken']
+    login_data = {
+        'csrfmiddlewaretoken': csrftoken,
+        'login': email,
+        'password': password,
+        'app': 'plfpl-web',
+        'redirect_uri': 'https://fantasy.premierleague.com/a/login'
+    }
+    # Log in
+    session.post('https://users.premierleague.com/accounts/login/', data=login_data)
+    # Get List Transfers
+    response = session.get('https://fantasy.premierleague.com/drf/transfers')
+    user_info = response.json()
+    logging.debug(f'User Info: \n {user_info}')
+    return user_info

@@ -5,6 +5,7 @@
 # Python
 *.egg-info
 *__pycache__
+*.pytest_cache
 
 # Data
 *.log
@@ -15,3 +16,6 @@
 *.pbix
 *.zip
 reports
+
+# Credentials
+**/credentials.py
