@@ -58,7 +58,8 @@ def get_rankings(output_name, nb_users):
 
     logger.info('Start extracting rankings')
 
-    total_users = requests.get(URL_BOOTSTRAP).json()['total-players']
+    bootstrap = requests.get(URL_BOOTSTRAP).json()
+    total_users = bootstrap['total_players']
     list_users_ranks = []
 
     for i in range(nb_users):
@@ -66,8 +67,13 @@ def get_rankings(output_name, nb_users):
             logger.debug(f'Extracted {i} Users')
         
         user_id = str(random.randint(0, total_users))
-        result = requests.get(URL_BASE+'/entry/' + user_id + '/history')
-        list_users_ranks.extend(result.json()['history'])
+        result = requests.get(URL_BASE+'entry/' + user_id + '/history/')
+        # print(result.json())
+        user_ranking = result.json()['current']
+        for gw in range(len(user_ranking)):
+            user_ranking[gw]['user'] = user_id
+        # list_users_ranks.extend(result.json()['current'])
+        list_users_ranks.extend(user_ranking)
         time.sleep(0.01)
 
     logger.info('Finished extracting rankings')

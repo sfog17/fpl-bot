@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import fpl
+import fpl.transform.features
 import fpl.constants.fields as fld
 from fpl.constants.structure import FILE_PROC_FEATURES, FILE_PREDICTIONS
 
@@ -33,3 +33,4 @@ def run(reload_data: bool):
 
     df_combined = predict_simple(df_features)
     df_combined.to_csv(FILE_PREDICTIONS, index=False, encoding='utf-8-sig')
+    return df_combined

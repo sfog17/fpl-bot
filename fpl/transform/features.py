@@ -3,7 +3,6 @@ import fpl.constants.fields as fld
 from fpl.constants.structure import FILE_INTER_HISTORICAL, FILE_INTER_BOOTSTRAP, FILE_PROC_FEATURES
 import fpl.extract.bootstrap
 import fpl.extract.historical
-from fpl.utils.featurise import add_prev_groupby
 
 
 def prepare_features(df_bootstrap: pd.DataFrame, df_historical: pd.DataFrame):
@@ -14,7 +13,6 @@ def prepare_features(df_bootstrap: pd.DataFrame, df_historical: pd.DataFrame):
     # Create New Features - Other module
 
     # Select Fields
-
 
     return df_combined
 

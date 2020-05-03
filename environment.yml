@@ -30,10 +30,12 @@ dependencies:
   - pandas=0.23.4=py37h830ac7b_0
   - pip=18.1=py37_0
   - pluggy=0.9.0=py37_0
+  - pulp=1.6.8=py37_1000
   - py=1.8.0=py37_0
   - pycparser=2.19=py37_0
   - pylint=2.3.1=py37_0
   - pyopenssl=18.0.0=py37_0
+  - pyparsing=2.4.0=py_0
   - pysocks=1.6.8=py37_0
   - pytest=4.3.0=py37_0
   - python=3.7.1=he44a216_5
