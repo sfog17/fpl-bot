@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 import fpl.constants.fields as fld
-import fpl.collect.download
+import fpl.download_data.scrape
 import fpl.extract.bootstrap
 import fpl.extract.historical
 import fpl.transform.features
@@ -11,6 +11,7 @@ from fpl.user import UserTeam
 from fpl.credentials import EMAIL, PASSWORD
 
 pd.options.display.max_columns = 15
+
 
 def get_current_user_info():
     team = UserTeam(money=100)
@@ -32,12 +33,10 @@ def select_weekly_players():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    # fpl.collect.download.get_historical('fpl_api_historical')
-    fpl.collect.download.get_rankings('rankings_test', 10000)
-    # fpl.extract.historical.run()
+    logging.basicConfig(level=logging.DEBUG)
+    # fpl.extract.player-details.run()
     # fpl.transform.features.run(reload_data=False)
     # fpl.model.predict.run(reload_data=True)
-    # fpl.collect.download.get_user_info(email=EMAIL, password=PASSWORD)
+    # fpl.download_data.download.get_user_info(email=EMAIL, password=PASSWORD)
     # get_current_user_info()
     # select_weekly_players()

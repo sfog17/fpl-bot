@@ -3,7 +3,7 @@ import logging
 import pandas as pd
 
 import fpl.constants.fields as fld
-from fpl.constants.structure import DIR_RAW_HIST, FILE_INTER_HISTORICAL
+from fpl.constants.structure import DIR_RAW_PLAYER_DETAILS, FILE_INTER_HISTORICAL
 
 TOTAL_POINTS = 'total_points'
 
@@ -66,5 +66,5 @@ def build_bootstrap_dataset(dir_data_raw_hist):
 
 
 def run():
-    output_historical = build_bootstrap_dataset(DIR_RAW_HIST)
+    output_historical = build_bootstrap_dataset(DIR_RAW_PLAYER_DETAILS)
     output_historical.to_csv(FILE_INTER_HISTORICAL, index=False)

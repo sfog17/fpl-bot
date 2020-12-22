@@ -1,8 +1,6 @@
 import logging
-import pandas as pd
-import requests
 from typing import List
-from fpl.collect.download import get_user_info
+from fpl.download_data.scrape import scrape_user_team
 from user_player import UserPlayer, PlayerRole
 
 logger = logging.getLogger(__name__)
@@ -26,7 +24,7 @@ class UserTeam(object):
         self.unlimited_transfers = unlimited_transfers
 
     def fetch_fpl_info(self, email, password):
-        user_info = get_user_info(email=email, password=password)
+        user_info = scrape_user_team(email=email, password=password)
         self.money_bank = user_info['helper']['bank']
         self.free_transfers = user_info['helper']['transfers_state']['free']
 
