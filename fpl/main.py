@@ -3,14 +3,14 @@ import pandas as pd
 import constants.fields as fld
 import fpl.model.predict
 import fpl.optimise
-from fpl.user import UserTeam
+from fpl.manager import ManagerTeam
 from fpl.credentials import EMAIL, PASSWORD
 
 pd.options.display.max_columns = 15
 
 
-def get_current_user_info():
-    team = UserTeam(money=100)
+def get_current_manager_info():
+    team = ManagerTeam(money=100)
     team.fetch_fpl_info(email=EMAIL, password=PASSWORD)
     print(team.money_bank)
     print(team.money_total)
@@ -33,6 +33,6 @@ if __name__ == '__main__':
     # fpl.extract.player-details.run()
     # fpl.transform.features.run(reload_data=False)
     # fpl.model.predict.run(reload_data=True)
-    # fpl.download.download.get_user_info(email=EMAIL, password=PASSWORD)
-    # get_current_user_info()
+    # fpl.download.download.get_manager_info(email=EMAIL, password=PASSWORD)
+    # get_current_manager_info()
     # select_weekly_players()

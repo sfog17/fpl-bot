@@ -3,11 +3,11 @@ import pandas as pd
 import constants.fields as fld
 from typing import List, Dict
 from pulp import LpProblem, LpMaximize, LpVariable, lpSum, LpSolverDefault, LpStatus
-from user_player import PlayerRole
+from manager_player import PlayerRole
 
 # Added during preprocess
 SQUAD_ROLE = 'squad_role'
-IN_USER_TEAM = 'in_user_team'
+IN_MANAGER_TEAM = 'in_manager_team'
 
 
 def preprocess(df_pred, col_pred):
@@ -45,9 +45,9 @@ def select_team(df_predict: pd.DataFrame,
     # Pre-process (double the lines - 1 for normal, 1 for captain)
     df = preprocess(df_predict, col_pred=col_pred)
     if not existing_team:
-        df[IN_USER_TEAM] = 0
+        df[IN_MANAGER_TEAM] = 0
     else:
-        df[IN_USER_TEAM] = np.where(df[col_id].isin(existing_team), 1, 0)
+        df[IN_MANAGER_TEAM] = np.where(df[col_id].isin(existing_team), 1, 0)
 
     # SET HIGH LEVEL CONSTRAINTS
     max_players = 15
@@ -70,7 +70,7 @@ def select_team(df_predict: pd.DataFrame,
     position = df[col_pos]
     team = df[col_team]
     role = df[SQUAD_ROLE]
-    in_user_team = df[IN_USER_TEAM]
+    in_manager_team = df[IN_MANAGER_TEAM]
 
     # x: binary variable for the selection of the player (0: not selected, 1: selected)
     x = LpVariable.dicts('Selected', player, cat='Binary')
@@ -81,7 +81,7 @@ def select_team(df_predict: pd.DataFrame,
     # SET THE CONSTRAINTS
     prob += lpSum([x[p] for p in player]) <= max_players
     prob += lpSum([x[p] * cost[p] for p in player]) <= max_cost
-    prob += 15 - lpSum([x[p] * in_user_team[p] for p in player]) <= free_transfers
+    prob += 15 - lpSum([x[p] * in_manager_team[p] for p in player]) <= free_transfers
 
     # constraints position
     prob += lpSum([x[p] if position[p] == 'GKP' else 0 for p in player]) == nb_gkp

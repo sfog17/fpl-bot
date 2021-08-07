@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import List, Dict, Any
 import requests
 import pandas as pd
-from fpl.constants.structure import DIR_RAW_PLAYER_DETAILS, DIR_USER_HISTORY, DIR_RAW_BOOTSTRAP, DIR_RAW_FIXTURES
+from fpl.constants.structure import DIR_RAW_PLAYER_DETAILS, DIR_MANAGER_HISTORY, DIR_RAW_BOOTSTRAP, DIR_RAW_FIXTURES
 
 # URL
 URL_BASE = 'https://fantasy.premierleague.com/api/'
@@ -86,65 +86,65 @@ def scrape_player_detailed(output_dir: Path = DIR_RAW_PLAYER_DETAILS, filename: 
     return output_path
 
 
-def scrape_user_history(
-        output_dir: Path = DIR_USER_HISTORY,
-        filename: str = 'user_history',
-        nb_users: int = 2000,
+def scrape_manager_history(
+        output_dir: Path = DIR_MANAGER_HISTORY,
+        filename: str = 'manager',
+        nb_managers: int = 2000,
         include_current: bool = False
 ) -> List[Path]:
     """
-    Extract the user_history for a list of random users of fantasy football
+    Extract the manager for a list of random managers of fantasy football
     :param output_dir:   T  arget directory
     :param filename:        Filename output (date and suffix will be appended)
-    :param nb_users:        Number of users to query
+    :param nb_managers:        Number of managers to query
     :param include_current: If yes, extract the weekly rankings for the current season
     :return:                Path of the downloaded file
     """
     output_paths = []
 
-    logger.info('Start extracting user_history')
+    logger.info('Start extracting manager')
     # Count number of players + get season_name
     bootstrap = requests.get(URL_BOOTSTRAP).json()
     season_name = _extract_season_name(bootstrap)
-    total_users = bootstrap['total_players']
-    users_id = [str(random.randint(0, total_users)) for _ in range(nb_users)]
+    total_managers = bootstrap['total_players']
+    managers_ids = [str(random.randint(0, total_managers)) for _ in range(nb_managers)]
 
-    users_current = []
-    users_past = []
+    managers_current = []
+    managers_past = []
 
-    for idx, user in enumerate(users_id, start=1):
+    for idx, manager in enumerate(managers_ids, start=1):
         if (idx % 100) == 0:
-            logger.debug(f'Extracted {idx} Users')
-        result = requests.get(URL_BASE+'entry/' + user + '/history/')
+            logger.debug(f'Extracted {idx} Managers')
+        result = requests.get(URL_BASE+'entry/' + manager + '/history/')
 
         # Extract info current
         if include_current:
             current = result.json()['current']
             for gw in range(len(current)):
-                current[gw]['user'] = user
+                current[gw]['manager'] = manager
                 current[gw]['season_name'] = season_name
-            users_current.extend(current)
+            managers_current.extend(current)
 
         # Extract info past
         past = result.json()['past']
         for gw in range(len(past)):
-            past[gw]['user'] = user
-        users_past.extend(past)
+            past[gw]['manager'] = manager
+        managers_past.extend(past)
 
         time.sleep(0.01)
-    logger.info('Finished extracting user_history')
+    logger.info('Finished extracting manager')
 
     # Output data current (if selected)
     if include_current:
         output_path_current = output_dir / _format_filename(filename + '_current', 'csv')
-        df_rankings_current = pd.DataFrame(users_current).sort_values(['user', 'event'])
+        df_rankings_current = pd.DataFrame(managers_current).sort_values(['manager', 'event'])
         df_rankings_current.to_csv(output_path_current, index=False)
         logger.info(f'Results (current) wrote to csv file {output_path_current}')
         output_paths.append(output_path_current)
 
     # Output data past
     output_path_past = output_dir / _format_filename(filename + '_past', 'csv')
-    df_rankings_past = pd.DataFrame(users_past).sort_values(['user', 'season_name'])
+    df_rankings_past = pd.DataFrame(managers_past).sort_values(['manager', 'season_name'])
     df_rankings_past.to_csv(output_path_past, index=False)
     logger.info(f'Results (past) wrote to csv file {output_path_past}')
     output_paths.append(output_path_past)
@@ -152,8 +152,8 @@ def scrape_user_history(
     return output_paths
 
 
-def scrape_user_team(email: str, password: str) -> dict:
-    logging.info('Connect - Retrieve user info from https://fantasy.premierleague.com/')
+def scrape_manager_team(email: str, password: str) -> dict:
+    logging.info('Connect - Retrieve manager info from https://fantasy.premierleague.com/')
 
     # Create Session
     session = requests.Session()
@@ -171,9 +171,9 @@ def scrape_user_team(email: str, password: str) -> dict:
     session.post('https://users.premierleague.com/accounts/login/', data=login_data)
     # Get List Transfers
     response = session.get('https://fantasy.premierleague.com/drf/transfers')
-    user_info = response.json()
-    logging.debug(f'User Info: \n {user_info}')
-    return user_info
+    manager_info = response.json()
+    logging.debug(f'Manager Info: \n {manager_info}')
+    return manager_info
 
 
 def _format_filename(output_name, extension) -> str:
@@ -199,10 +199,10 @@ if __name__ == '__main__':
     elif DATA == 'fixtures':
         scrape_fixtures()
     elif DATA == 'history':
-        NB_USERS = int(sys.argv[2])
-        scrape_user_history(nb_users=NB_USERS)
+        NB_MANAGERS = int(sys.argv[2])
+        scrape_manager_history(nb_managers=NB_MANAGERS)
     elif DATA == 'history-include-current':
-        NB_USERS = int(sys.argv[2])
-        scrape_user_history(nb_users=NB_USERS, include_current=True)
+        NB_MANAGERS = int(sys.argv[2])
+        scrape_manager_history(nb_managers=NB_MANAGERS, include_current=True)
     else:
         print('Wrong argument')

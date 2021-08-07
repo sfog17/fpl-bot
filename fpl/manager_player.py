@@ -9,8 +9,8 @@ class PlayerRole(Enum):
     VICE_CAPTAIN = 3
 
 @dataclass
-class UserPlayer(object):
-    """ Football Player that can be selected by the user """
+class ManagerPlayer(object):
+    """ Football Player that can be selected by the manager """
     id_season: int
     role: PlayerRole
     purchase_price: float

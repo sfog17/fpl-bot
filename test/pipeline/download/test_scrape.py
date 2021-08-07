@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from pipeline.download.scrape import scrape_bootstrap, scrape_fixtures, scrape_user_history, _extract_season_name
+from pipeline.download.scrape import scrape_bootstrap, scrape_fixtures, scrape_manager_history, _extract_season_name
 
 
 TEST_RESOURCES = Path(__file__).parent.parent.parent / 'test-resources'
@@ -16,15 +16,15 @@ def test_scrape_fixtures():
     assert filepath.exists()
 
 
-def test_scrape_user_history():
-    file_paths = scrape_user_history(output_dir=Path('../../test-output'), nb_users=10, include_current=True)
+def test_scrape_manager_history():
+    file_paths = scrape_manager_history(output_dir=Path('../../test-output'), nb_managers=10, include_current=True)
     assert len(file_paths) == 2
     assert file_paths[0].exists()
     assert file_paths[1].exists()
 
 
-def test_scrape_user_history_past_only():
-    file_paths = scrape_user_history(output_dir=Path('../../test-output'), nb_users=10, include_current=False)
+def test_scrape_manager_history_past_only():
+    file_paths = scrape_manager_history(output_dir=Path('../../test-output'), nb_managers=10, include_current=False)
     assert len(file_paths) == 1
     assert file_paths[0].exists()
 
