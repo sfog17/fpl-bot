@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-import fpl.constants.fields as fld
-from fpl.extract.historical import add_avg_prev_season, TOTAL_POINTS
+import constants.fields as fld
+from pipeline.transform.clean_historical import add_avg_prev_season, TOTAL_POINTS
 pd.options.display.max_columns = 5
 
 

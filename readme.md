@@ -30,3 +30,9 @@ python setup.py install
 
 ### Automate
 - Automate Pipeline (Luigi/Airflow)
+
+
+# Backlog issues
+
+- Install doesn't work (require `pip install --editable .`) to recognise module imports
+- Logging when calling directly `scrape.py` doesn't work

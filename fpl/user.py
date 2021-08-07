@@ -1,6 +1,6 @@
 import logging
 from typing import List
-from fpl.download_data.scrape import scrape_user_team
+from pipeline.download.scrape import scrape_user_team
 from user_player import UserPlayer, PlayerRole
 
 logger = logging.getLogger(__name__)

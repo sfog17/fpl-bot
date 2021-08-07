@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-import fpl.transform.features
-import fpl.constants.fields as fld
-from fpl.constants.structure import FILE_PROC_FEATURES, FILE_PREDICTIONS
+import pipeline.transform.features
+import constants.fields as fld
+from constants import FILE_PROC_FEATURES, FILE_PREDICTIONS
 
 
 def predict_simple(df: pd.DataFrame):
@@ -27,7 +27,7 @@ def run(reload_data: bool):
         reload_data {bool} -- If True, process previous steps (extract/transfom)
     """
     if reload_data:
-        fpl.transform.features.run(reload_data=True)
+        pipeline.transform.features.run(reload_data=True)
 
     df_features = pd.read_csv(FILE_PROC_FEATURES, encoding='utf-8-sig')
 

@@ -176,14 +176,14 @@ def scrape_user_team(email: str, password: str) -> dict:
     return user_info
 
 
-def _format_filename(output_name, extension):
+def _format_filename(output_name, extension) -> str:
     today_str = datetime.today().strftime('%Y%m%d')
     full_name = today_str + '_' + output_name + '.' + extension
     return full_name
 
 
-def _extract_season_name(boostrap_json: Dict[str, Any]):
-    events = boostrap_json['events']
+def _extract_season_name(bootstrap_json: Dict[str, Any]) -> str:
+    events = bootstrap_json['events']
     year_start = events[0]['deadline_time'][:4]
     year_end = events[-1]['deadline_time'][:4]
     season_name = f'{year_start}/{year_end[2:]}'

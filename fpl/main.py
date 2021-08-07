@@ -1,10 +1,6 @@
 import logging
 import pandas as pd
-import fpl.constants.fields as fld
-import fpl.download_data.scrape
-import fpl.extract.bootstrap
-import fpl.extract.historical
-import fpl.transform.features
+import constants.fields as fld
 import fpl.model.predict
 import fpl.optimise
 from fpl.user import UserTeam
@@ -37,6 +33,6 @@ if __name__ == '__main__':
     # fpl.extract.player-details.run()
     # fpl.transform.features.run(reload_data=False)
     # fpl.model.predict.run(reload_data=True)
-    # fpl.download_data.download.get_user_info(email=EMAIL, password=PASSWORD)
+    # fpl.download.download.get_user_info(email=EMAIL, password=PASSWORD)
     # get_current_user_info()
     # select_weekly_players()

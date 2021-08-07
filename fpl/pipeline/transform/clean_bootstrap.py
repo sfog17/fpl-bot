@@ -1,8 +1,9 @@
 import json
 import logging
+from pathlib import Path
+from typing import Any, Dict, Tuple
 import numpy as np
 import pandas as pd
-
 import fpl.constants.fields as fld
 from fpl.constants.structure import DIR_RAW_BOOTSTRAP, FILE_INTER_BOOTSTRAP
 
@@ -121,13 +122,13 @@ def get_team_info(bootstrap_json):
     return df_team[keep_fields]
 
 
-def get_week_info(file_path):
+def _get_week_info(file_path: Path) -> pd.DataFrame:
     """
     Read the file, extract info from json, denormalize into a dataframe
-    :param pathlib.Path file_path:
+    :param file_path:
     :return:
     """
-    with open(file_path, encoding="utf8") as file_in:
+    with file_path.open(encoding="utf8") as file_in:
         bootstrap_json = json.loads(file_in.read())
 
         # Merge Info Player / Team / Position
@@ -150,17 +151,14 @@ def get_week_info(file_path):
     return df_week
 
 
-def build_bootstrap_dataset(dir_data_raw_hist):
-    """
-    :param pathlib.Path dir_data_raw_hist:
-    :return:
-    """
+def build_bootstrap_dataset(dir_bootstrap: Path):
+    """ """
     list_df = []
-    logger.info(f'Screen folder {dir_data_raw_hist}')
-    for file_path in dir_data_raw_hist.glob('*.json'):
+    logger.info(f'Screen folder {dir_bootstrap}')
+    for file_path in dir_bootstrap.glob('*.json'):
         if file_path.is_file():
             logger.info(f'Processing file {file_path.name}')
-            df_week = get_week_info(file_path)
+            df_week = _get_week_info(file_path)
             list_df.append(df_week)
 
     df_bootstrap = pd.concat(list_df)
@@ -183,6 +181,23 @@ def build_bootstrap_dataset(dir_data_raw_hist):
     df_merged[fld.STAT_MINUTES_TOTAL_SEASON] = np.where(df_merged[fld.GW] == 1, np.nan, df_merged[fld.STAT_MINUTES_TOTAL_SEASON])
 
     return df_merged
+
+
+def _extract_season_name(bootstrap_json: Dict[str, Any]) -> str:
+    events = bootstrap_json['events']
+    year_start = events[0]['deadline_time'][:4]
+    year_end = events[-1]['deadline_time'][:4]
+    season_name = f'{year_start}/{year_end[2:]}'
+    return season_name
+
+
+def _extract_gameweek(bootstrap_json: Dict[str, Any]) -> Tuple[str, str]:
+    season_name = _extract_season_name(bootstrap_json)
+    events = bootstrap_json['events']
+    for event in events:
+        if event['is_current']:
+            return season_name, event['id'], event['name']
+    return season_name, "no idea"
 
 
 def run():

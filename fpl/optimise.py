@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import fpl.constants.fields as fld
+import constants.fields as fld
 from typing import List, Dict
 from pulp import LpProblem, LpMaximize, LpVariable, lpSum, LpSolverDefault, LpStatus
 from user_player import PlayerRole

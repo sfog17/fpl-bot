@@ -1,7 +1,6 @@
 import json
 import logging
 import pandas as pd
-
 import fpl.constants.fields as fld
 from fpl.constants.structure import DIR_RAW_PLAYER_DETAILS, FILE_INTER_HISTORICAL
 
@@ -46,7 +45,6 @@ def get_historical_info(history_json):
     df_history = df_history[[fld.PLAYER_ID, fld.SEASON_ID, fld.STAT_POINTS_AVG_SEASON_PREV]]
 
     return df_history
-
 
 
 def build_bootstrap_dataset(dir_data_raw_hist):
