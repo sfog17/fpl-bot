@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from pipeline.transform.preprocess_bootstrap import _get_week_info, _extract_gameweek
+from pipeline.transform.preprocess_bootstrap import get_week_info, extract_gameweek
 import pandas as pd
 pd.options.display.max_columns = 20
 pd.options.display.width = 300
@@ -9,8 +9,8 @@ TEST_RESOURCES = Path(__file__).parent.parent.parent / 'test-resources'
 
 
 def test_print():
-    print(_get_week_info(TEST_RESOURCES / '2017_bootstrap-static.json'))
-    print(_get_week_info(TEST_RESOURCES / '2020_bootstrap-static.json'))
+    print(get_week_info(TEST_RESOURCES / '2017_bootstrap-static.json'))
+    print(get_week_info(TEST_RESOURCES / '2020_bootstrap-static.json'))
 
 # past points and minutes initialised at 0
 # Check no empty "chance of playing"
@@ -29,5 +29,5 @@ def test_extract_gameweek():
     for path in all_files:
         with path.open(encoding='utf-8') as f_in:
             bootstrap_data = json.load(f_in)
-            season, gw = _extract_gameweek(bootstrap_data)
+            season, gw = extract_gameweek(bootstrap_data)
             print(f'{season}\t{gw}\t {path.name}')
