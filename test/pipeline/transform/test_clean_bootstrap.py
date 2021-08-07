@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from pipeline.transform.clean_bootstrap import _get_week_info, _extract_gameweek
+from pipeline.transform.preprocess_bootstrap import _get_week_info, _extract_gameweek
 import pandas as pd
 pd.options.display.max_columns = 20
 pd.options.display.width = 300

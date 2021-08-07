@@ -10,11 +10,9 @@ from fpl.constants.structure import DIR_RAW_BOOTSTRAP, FILE_INTER_BOOTSTRAP
 logger = logging.getLogger(__name__)
 
 
-def get_player_info(bootstrap_json):
+def get_player_info(bootstrap_json: Dict[str, Any]) -> pd.DataFrame:
     """
     Take the json extracted from the api and returns a DataFrame with player info
-    :param dict bootstrap_json:
-    :return: pd.DataFrame
     """
     df_player = pd.DataFrame(bootstrap_json['elements'])
     mapping = {
@@ -26,6 +24,7 @@ def get_player_info(bootstrap_json):
         'now_cost': fld.PLAYER_COST,
         'chance_of_playing_next_round': fld.PLAYER_CHANCE_PLAY,
         'cost_change_event': fld.FPL_COST_CHANGE,
+        'selected_by_percent': fld.FPL_SELECTED_BY,
         'transfers_out_event': fld.FPL_TRANSFERS_OUT,
         'transfers_in_event': fld.FPL_TRANSFERS_IN,
         'event_points': fld.RESULT_POINTS_PREV,

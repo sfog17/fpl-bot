@@ -36,6 +36,7 @@ GAME_2_TEAM_STRENGTH = 'game_2_team_strength'
 FPL_TRANSFERS_IN = 'fpl_transfers_in'
 FPL_TRANSFERS_OUT = 'fpl_transfers_out'
 FPL_COST_CHANGE = 'fpl_cost_change'
+FPL_SELECTED_BY = 'fpl_selected_by'
 
 # Result
 RESULT_POINTS_PREV = 'result_points_prev'
