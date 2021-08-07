@@ -101,11 +101,13 @@ def scrape_manager_history(
     :return:                Path of the downloaded file
     """
     output_paths = []
+    season_started = False
 
     logger.info('Start extracting manager')
     # Count number of players + get season_name
     bootstrap = requests.get(URL_BOOTSTRAP).json()
     season_name = _extract_season_name(bootstrap)
+    season_started = bootstrap['events'][0]['finished']
     total_managers = bootstrap['total_players']
     managers_ids = [str(random.randint(0, total_managers)) for _ in range(nb_managers)]
 
@@ -135,7 +137,7 @@ def scrape_manager_history(
     logger.info('Finished extracting manager')
 
     # Output data current (if selected)
-    if include_current:
+    if include_current and season_started:
         output_path_current = output_dir / _format_filename(filename + '_current', 'csv')
         df_rankings_current = pd.DataFrame(managers_current).sort_values(['manager', 'event'])
         df_rankings_current.to_csv(output_path_current, index=False)
