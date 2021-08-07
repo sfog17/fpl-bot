@@ -37,6 +37,11 @@ FPL_TRANSFERS_IN = 'fpl_transfers_in'
 FPL_TRANSFERS_OUT = 'fpl_transfers_out'
 FPL_COST_CHANGE = 'fpl_cost_change'
 FPL_SELECTED_BY = 'fpl_selected_by'
+FPL_EXPECTED_POINTS = 'fpl_expected_points'  # ep_next, seems to be an attempt to predict points by FPL
+FPL_INFLUENCE = 'fpl_ict_influence'
+FPL_CREATIVITY = 'fpl_ict_creativity'
+FPL_THREAT = 'fpl_ict_threat'
+FPL_ICT_INDEX = 'fpl_ict_index'
 
 # Result
 RESULT_POINTS_PREV = 'result_points_prev'
