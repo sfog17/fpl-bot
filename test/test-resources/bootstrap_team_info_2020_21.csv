@@ -1,0 +1,21 @@
+team_name,team_id,team_strength,game_nb,game_1_home,game_1_team_name,game_1_team_strength,game_2_home,game_2_team_name,game_2_team_strength
+Arsenal,3,4,1,True,Newcastle,3,,,
+Aston Villa,7,3,2,True,Everton,3,False,Man City,5.0
+Brighton,36,3,1,False,Leeds,3,,,
+Burnley,90,2,2,False,West Ham,3,False,Liverpool,5.0
+Chelsea,8,4,2,False,Fulham,2,False,Leicester,4.0
+Crystal Palace,31,3,1,False,Man City,5,,,
+Everton,11,3,1,False,Aston Villa,3,,,
+Fulham,54,2,2,True,Chelsea,4,True,Man Utd,4.0
+Leicester,13,4,2,True,Southampton,3,True,Chelsea,4.0
+Leeds,2,3,2,True,Brighton,3,True,Southampton,3.0
+Liverpool,14,5,2,True,Man Utd,4,True,Burnley,2.0
+Man City,43,5,2,True,Crystal Palace,3,True,Aston Villa,3.0
+Man Utd,1,4,2,False,Liverpool,5,False,Fulham,2.0
+Newcastle,4,3,1,False,Arsenal,4,,,
+Sheffield Utd,49,3,1,True,Spurs,4,,,
+Southampton,20,3,2,False,Leicester,4,False,Leeds,3.0
+Spurs,6,4,1,False,Sheffield Utd,3,,,
+West Brom,35,2,2,False,Wolves,3,False,West Ham,3.0
+West Ham,21,3,2,True,Burnley,2,True,West Brom,2.0
+Wolves,39,3,1,True,West Brom,2,,,

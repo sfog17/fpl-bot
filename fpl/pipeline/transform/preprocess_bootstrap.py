@@ -1,13 +1,20 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Literal
 import numpy as np
 import pandas as pd
 import fpl.constants.fields as fld
 from fpl.constants.structure import DIR_RAW_BOOTSTRAP, FILE_INTER_BOOTSTRAP
 
 logger = logging.getLogger(__name__)
+
+
+TEAM_FIELDS = [
+    fld.TEAM_NAME, fld.TEAM_ID, fld.TEAM_STRENGTH, fld.GAME_NB,
+    fld.GAME_1_HOME, fld.GAME_1_TEAM_NAME, fld.GAME_1_TEAM_STRENGTH,
+    fld.GAME_2_HOME, fld.GAME_2_TEAM_NAME, fld.GAME_2_TEAM_STRENGTH
+]
 
 
 def get_player_info(bootstrap_json: Dict[str, Any]) -> pd.DataFrame:
@@ -45,11 +52,9 @@ def get_player_info(bootstrap_json: Dict[str, Any]) -> pd.DataFrame:
     return df_player[keep_fields]
 
 
-def get_position_info(bootstrap_json):
+def get_position_info(bootstrap_json: Dict[str, Any]) -> pd.DataFrame:
     """
     Take the json extracted from the api and returns a DataFrame with position info
-    :param dict bootstrap_json:
-    :return: pd.DataFrame
     """
     df_position = pd.DataFrame(bootstrap_json['element_types'])
     mapping = {
@@ -64,11 +69,10 @@ def get_position_info(bootstrap_json):
     return df_position[keep_fields]
 
 
-def get_team_info(bootstrap_json):
+def get_team_info_v1(bootstrap_json: Dict[str, Any]) -> pd.DataFrame:
     """
     Take the json extracted from the api and returns a DataFrame with team info
-    :param dict bootstrap_json:
-    :return: pd.DataFrame
+    Valid for API until 2020
     """
 
     df_team = pd.DataFrame(bootstrap_json['teams'])
@@ -117,40 +121,119 @@ def get_team_info(bootstrap_json):
     }
     df_team.rename(columns=mapping_game, inplace=True)
 
-    # Select Field
-    keep_fields = [
-        fld.TEAM_NAME, fld.TEAM_ID, fld.TEAM_STRENGTH, fld.GAME_NB, fld.GAME_1_HOME, fld.GAME_2_HOME,
-        fld.GAME_1_TEAM_NAME, fld.GAME_1_TEAM_STRENGTH, fld.GAME_2_TEAM_NAME, fld.GAME_2_TEAM_STRENGTH,
-    ]
-
-    return df_team[keep_fields]
+    return df_team[TEAM_FIELDS]
 
 
-def get_week_info(file_path: Path) -> pd.DataFrame:
+def get_team_info_v2(bootstrap_json: Dict[str, Any], fixture_json: Dict[str, Any]) -> pd.DataFrame:
+    """
+    Take the json extracted from the api and returns a DataFrame with team info
+    Valid for API after 2020
+    """
+    # Get Team Data
+    df_team = pd.DataFrame(bootstrap_json['teams'])
+    mapping = {
+        'id': fld.TEAM_ID_SEASON,
+        'name': fld.TEAM_NAME,
+        'code': fld.TEAM_ID,
+        'strength': fld.TEAM_STRENGTH
+    }
+    if not set(mapping.keys()).issubset(set(df_team.columns)):
+        raise KeyError(f'{set(mapping.keys()) - set(df_team.columns)}')
+    df_team.rename(columns=mapping, inplace=True)
+    keep_fields = [fld.TEAM_NAME, fld.TEAM_ID, fld.TEAM_ID_SEASON, fld.TEAM_STRENGTH]
+    df_team = df_team[keep_fields]
+    # Get next gameweek fixtures
+    prev_gw = extract_prev_gameweek(bootstrap_json)
+    current_gw = prev_gw + 1 if prev_gw is not None else 1
+    df_fixtures = get_fixtures_info(fixture_json, current_gw)
+    # Format with next gameweek data
+    df_formatted = df_team \
+        .set_index(fld.TEAM_ID_SEASON)\
+        .join(df_fixtures.set_index(fld.TEAM_ID_SEASON)) \
+        .reset_index()\
+        .merge(
+            df_team.rename(columns={fld.TEAM_NAME: fld.GAME_1_TEAM_NAME, fld.TEAM_STRENGTH: fld.GAME_1_TEAM_STRENGTH}),
+            left_on=fld.GAME_1_TEAM_ID_SEASON,
+            right_on=fld.TEAM_ID_SEASON,
+            how='left',
+            suffixes=['', '_1']
+        )\
+        .merge(
+            df_team.rename(columns={fld.TEAM_NAME: fld.GAME_2_TEAM_NAME, fld.TEAM_STRENGTH: fld.GAME_2_TEAM_STRENGTH}),
+            left_on=fld.GAME_2_TEAM_ID_SEASON,
+            right_on=fld.TEAM_ID_SEASON,
+            how='left',
+            suffixes=['', '_2']
+        )
+
+    return df_formatted[TEAM_FIELDS]
+
+
+def get_fixtures_info(fixture_json: Dict[str, Any], gameweek: int) -> pd.DataFrame:
+    """
+    Extra the fixtures information
+    Required to identify the next game
+    """
+    fixtures_data = []
+    df = pd.DataFrame(fixture_json)
+    df_gw = df[df['event'] == gameweek]
+    teams_playing = set(df_gw['team_h']).union(set(df_gw['team_a']))
+    for team in teams_playing:
+        team_data = []
+        for home_against in df_gw[(df_gw['team_h'] == team)]['team_a'].to_list():
+            team_data.append((True, home_against))
+        for away_against in df_gw[(df_gw['team_a'] == team)]['team_h'].to_list():
+            team_data.append((False, away_against))
+        game_nb = len(team_data)
+        aggregated = {
+            fld.TEAM_ID_SEASON: team,
+            fld.GAME_NB: game_nb,
+            fld.GAME_1_HOME: team_data[0][0],
+            fld.GAME_1_TEAM_ID_SEASON: team_data[0][1]
+        }
+        if game_nb == 2:
+            aggregated.update({
+                fld.GAME_2_HOME: team_data[1][0],
+                fld.GAME_2_TEAM_ID_SEASON: team_data[1][1]
+            })
+        fixtures_data.append(aggregated)
+    return pd.DataFrame(fixtures_data)
+
+
+def get_week_info(
+        bootstrap_path: Path,
+        api_version: Literal[1, 2],
+        fixtures_path: Optional[Path] = None
+) -> pd.DataFrame:
     """
     Read the file, extract info from json, denormalize into a dataframe
-    :param file_path:
-    :return:
     """
-    with file_path.open(encoding="utf8") as file_in:
-        bootstrap_json = json.loads(file_in.read())
+    with bootstrap_path.open(encoding="utf8") as bootstrap_file_in:
+        bootstrap_json = json.loads(bootstrap_file_in.read())
+    if api_version == 2:
+        with fixtures_path.open(encoding="utf8") as fixtures_in:
+            fixtures_json = json.loads(fixtures_in.read())
 
-        # Merge Info Player / Team / Position
-        df_player = get_player_info(bootstrap_json)
-        df_team = get_team_info(bootstrap_json)
-        df_position = get_position_info(bootstrap_json)
+    # Merge Info Player / Team / Position
+    df_player = get_player_info(bootstrap_json)
+    if api_version == 1:
+        df_team = get_team_info_v1(bootstrap_json)
+    else:
+        df_team = get_team_info_v2(bootstrap_json, fixtures_json)
+    df_position = get_position_info(bootstrap_json)
 
-        logging.debug(df_player.transpose().head())
-        logging.debug(df_team.transpose().head())
-        logging.debug(df_position.transpose().head())
+    logging.debug(df_player.transpose().head())
+    logging.debug(df_team.transpose().head())
+    logging.debug(df_position.transpose().head())
 
-        # Add Gameweek + Season Info
-        df_week = df_player.merge(df_team, on=fld.TEAM_ID).merge(df_position, on=fld.POSITION_ID)
-        df_week[fld.GW] = bootstrap_json['next-event']
-        df_week[fld.GW_PREV] = bootstrap_json['current-event']
-        season_year = bootstrap_json['events'][0]['deadline_time'][:4]
-        df_week[fld.SEASON_NAME] = season_year + '/' + str(int(season_year[2:4]) + 1)
-        df_week[fld.SEASON_ID] = int(season_year) - 2006 + 1
+    # Add Gameweek + Season Info
+    df_week = df_player.merge(df_team, on=fld.TEAM_ID).merge(df_position, on=fld.POSITION_ID)
+    prev_gw = extract_prev_gameweek(bootstrap_json)
+    df_week[fld.GW_PREV] = prev_gw
+    df_week[fld.GW] = prev_gw + 1 if prev_gw is not None else 1
+    season_year = bootstrap_json['events'][0]['deadline_time'][:4]
+    df_week[fld.SEASON_NAME] = season_year + '/' + str(int(season_year[2:4]) + 1)
+    df_week[fld.SEASON_ID] = int(season_year) - 2006 + 1
 
     return df_week
 
@@ -195,13 +278,12 @@ def extract_season_name(bootstrap_json: Dict[str, Any]) -> str:
     return season_name
 
 
-def extract_gameweek(bootstrap_json: Dict[str, Any]) -> Tuple[str, str]:
-    season_name = extract_season_name(bootstrap_json)
+def extract_prev_gameweek(bootstrap_json: Dict[str, Any]) -> Optional[int]:
     events = bootstrap_json['events']
     for event in events:
         if event['is_current']:
-            return season_name, event['id'], event['name']
-    return season_name, "no idea"
+            return event['id']
+    return None
 
 
 def run():

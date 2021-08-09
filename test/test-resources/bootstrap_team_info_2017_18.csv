@@ -1,0 +1,21 @@
+team_name,team_id,team_strength,game_nb,game_1_home,game_1_team_name,game_1_team_strength,game_2_home,game_2_team_name,game_2_team_strength
+Arsenal,3,4,1,True,Chelsea,4,,,
+Bournemouth,91,2,1,False,Brighton,2,,,
+Brighton,36,2,1,True,Bournemouth,2,,,
+Burnley,90,3,1,True,Liverpool,4,,,
+Chelsea,8,4,1,False,Arsenal,4,,,
+Crystal Palace,31,2,1,False,Southampton,2,,,
+Everton,11,3,1,True,Man Utd,5,,,
+Huddersfield,38,2,1,False,Leicester,3,,,
+Leicester,13,3,1,True,Huddersfield,2,,,
+Liverpool,14,4,1,False,Burnley,3,,,
+Man City,43,5,1,True,Watford,2,,,
+Man Utd,1,5,1,False,Everton,3,,,
+Newcastle,4,2,1,False,Stoke,2,,,
+Southampton,20,2,1,True,Crystal Palace,2,,,
+Stoke,110,2,1,True,Newcastle,2,,,
+Swansea,80,2,1,True,Spurs,4,,,
+Spurs,6,4,2,False,Swansea,2,True,West Ham,2.0
+Watford,57,2,1,False,Man City,5,,,
+West Brom,35,2,1,False,West Ham,2,,,
+West Ham,21,2,2,True,West Brom,2,False,Spurs,4.0
